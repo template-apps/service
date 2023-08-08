@@ -25,7 +25,7 @@ fi
 
 SERVICE="$(basename "$PWD")"
 REPOSITORY="$REGISTRY/$NAMESPACE-$SERVICE:$VERSION"
-JRE_IMAGE_URI="$REGISTRY/$NAMESPACE-custom-jre-15:0.1"
+JRE_IMAGE_URI="$REGISTRY/$NAMESPACE-custom-jre-20:0.1"
 
 ./gradlew clean build
 echo ">>> Compilation done"

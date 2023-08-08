@@ -1,4 +1,4 @@
-ARG JRE_IMAGE_URI=adoptopenjdk/openjdk15:alpine
+ARG JRE_IMAGE_URI=amazoncorretto:20.0.2-alpine
 FROM $JRE_IMAGE_URI
 MAINTAINER Sachin Goyal <sachin.goyal.se@gmail.com>
 VOLUME /opt
