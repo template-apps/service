@@ -1,8 +1,10 @@
 package apps.template.user.error;
 
+import jakarta.annotation.Nullable;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -12,9 +14,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Path;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Path;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
@@ -23,8 +26,10 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class UserErrorHandler extends ResponseEntityExceptionHandler {
     @Override
+    @Nullable
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+            MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+
         final BindingResult result = ex.getBindingResult();
         final FieldError error = result.getFieldError();
         String errorMessage = null;
