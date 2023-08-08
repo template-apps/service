@@ -33,7 +33,7 @@ spec:
             - name: MYSQL_ROOT_PASSWORD
               value: {{ .Values.app.db.password }}
             - name: MYSQL_DATABASE
-              value: {{ .Values.app.db.database }}
+              value: {{ .Values.app.db.name }}
             - name: MYSQL_USER
               value: {{ .Values.app.db.user }}
             - name: MYSQL_PASSWORD
