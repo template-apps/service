@@ -17,9 +17,11 @@ jobs:
       - name: Set up Amazon Corretto Java 20
         run: |
           # Download and install Amazon Corretto 20
+          mkdir -p ~/amazon-corretto-20
+          cd ~/amazon-corretto-20
           wget https://corretto.aws/downloads/latest/amazon-corretto-20-x64-linux-jdk.tar.gz
           tar -xzf amazon-corretto-20-x64-linux-jdk.tar.gz
-          export JAVA_HOME=$PWD/amazon-corretto-20-x64-linux-jdk
+          export JAVA_HOME=~/amazon-corretto-20/amazon-corretto-20-x64-linux-jdk
           export PATH=$JAVA_HOME/bin:$PATH
           java --version
 
