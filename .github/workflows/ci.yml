@@ -10,23 +10,13 @@ jobs:
     name: Build and Test
     runs-on: ubuntu-latest
 
+    container:
+      image: amazoncorretto:20
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Amazon Corretto Java 20
-        run: |
-          # Download and install Amazon Corretto 20
-          mkdir -p ~/amazon-corretto-20
-          cd ~/amazon-corretto-20
-          wget https://corretto.aws/downloads/latest/amazon-corretto-20-x64-linux-jdk.tar.gz
-          tar -xzf amazon-corretto-20-x64-linux-jdk.tar.gz
-          export JAVA_HOME=~/amazon-corretto-20/amazon-corretto-20-x64-linux-jdk
-          export PATH=$JAVA_HOME/bin:$PATH
-          java --version
-
       - name: Build with Gradle
-        run: |
-          java --version
-          ./gradlew build
+        run: java --version && ./gradlew build
 
