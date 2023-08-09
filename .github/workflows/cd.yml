@@ -62,7 +62,7 @@ jobs:
           export JAVA_HOME=/usr/lib/jvm/java-20-amazon-corretto
           export PATH=$JAVA_HOME/bin:$PATH
           ./rebuildAndPush.sh -r ${{ steps.login-ecr.outputs.registry }} \
-            -n $NAMESPACE -v "${{ steps.tagger.outputs.new_tag }}"
+            -n ${{env.NAMESPACE}} -v "${{ steps.tagger.outputs.new_tag }}"
 
   deploy:
     name: Deploy image to EKS
@@ -88,11 +88,11 @@ jobs:
       - name: helm deploy
         uses: bitovi/github-actions-deploy-eks-helm@v1.2.4
         with:
-          aws-region: $REGION
-          cluster-name: $NAMESPACE-eks-cluster
+          aws-region: ${{env.REGION}
+          cluster-name: ${{env.NAMESPACE}}-eks-cluster
           config-files: infrastructure/helm/values.yaml
           chart-path: infrastructure/helm
-          namespace: $NAMESPACE
-          values: image.repository="${{ needs.build.outputs.registry }}/$NAMESPACE-$SERVICE",image.tag="${{ needs.build.outputs.new_tag }},'imagePullSecrets=',app.db.local=false,app.db.host="RDS Host TBA",app.db.password="RDS Password TBA"
-          name: $SERVICE
+          namespace: ${{env.NAMESPACE}}
+          values: image.repository="${{ needs.build.outputs.registry }}/${{env.NAMESPACE}}-${{env.SERVICE}}",image.tag="${{ needs.build.outputs.new_tag }},'imagePullSecrets=',app.db.local=false,app.db.host="RDS Host TBA",app.db.password="RDS Password TBA"
+          name: ${{env.SERVICE}}
 
