@@ -50,6 +50,8 @@ jobs:
 
       - name: Build Image and Push to ECR
         run: |
+          export JAVA_HOME=/usr/lib/jvm/java-20-amazon-corretto
+          export PATH=$JAVA_HOME/bin:$PATH
           ./rebuildAndPush.sh -r ${{ steps.login-ecr.outputs.registry }} \
             -n apps-template -v "${{ steps.tagger.outputs.new_tag }}"
 
