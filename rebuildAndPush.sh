@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Example: ./rebuildAndPush.sh -r localhost:5500 -n apps-template -v latest -p linux/x86_64
-# Example: ./rebuildAndPush.sh -r 881387567440.dkr.ecr.us-east-1.amazonaws.com -n apps-template -v 0.1 -p linux/x86_64
+# Example: ./rebuildAndPush.sh -r 881387567440.dkr.ecr.us-east-1.amazonaws.com -n apps-template -v latest -p linux/x86_64
 
 ARCH=""
 
@@ -25,7 +25,7 @@ fi
 
 SERVICE="$(basename "$PWD")"
 REPOSITORY="$REGISTRY/$NAMESPACE-$SERVICE:$VERSION"
-JRE_IMAGE_URI="$REGISTRY/$NAMESPACE-custom-jre-20:0.1"
+JRE_IMAGE_URI="$REGISTRY/$NAMESPACE-custom-jre-20:latest"
 
 ./gradlew clean build
 echo ">>> Compilation done"

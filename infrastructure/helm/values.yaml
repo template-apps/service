@@ -9,7 +9,7 @@ image:
   repository: 881387567440.dkr.ecr.us-east-1.amazonaws.com/apps-template-user
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.1"
+  tag: "latest"
 
 #imagePullSecrets: []
 imagePullSecrets: [ { name: regcred } ]
