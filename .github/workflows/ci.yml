@@ -21,10 +21,10 @@ jobs:
           tar -xzf amazon-corretto-20-x64-linux-jdk.tar.gz
           export JAVA_HOME=$PWD/amazon-corretto-20-x64-linux-jdk
           export PATH=$JAVA_HOME/bin:$PATH
-          java -v
+          java --version
 
       - name: Build with Gradle
         run: |
-          java -v
+          java --version
           ./gradlew build
 
