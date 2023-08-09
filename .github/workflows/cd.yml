@@ -88,7 +88,7 @@ jobs:
       - name: helm deploy
         uses: bitovi/github-actions-deploy-eks-helm@v1.2.4
         with:
-          aws-region: ${{env.REGION}
+          aws-region: ${{env.REGION}}
           cluster-name: ${{env.NAMESPACE}}-eks-cluster
           config-files: infrastructure/helm/values.yaml
           chart-path: infrastructure/helm
