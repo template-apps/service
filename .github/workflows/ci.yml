@@ -1,0 +1,26 @@
+name: Continuous Integration
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Amazon Corretto Java 20
+        run: |
+          # Download and install Amazon Corretto 20
+          wget https://corretto.aws/downloads/latest/amazon-corretto-20-x64-linux-jdk.tar.gz
+          tar -xzf amazon-corretto-20-x64-linux-jdk.tar.gz
+          export JAVA_HOME=$PWD/amazon-corretto-20-x64-linux-jdk
+          export PATH=$JAVA_HOME/bin:$PATH
+
+      - name: Build with Gradle
+        run: ./gradlew build
