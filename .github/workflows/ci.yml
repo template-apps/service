@@ -16,11 +16,12 @@ jobs:
 
       - name: Set up Java
         run: |
-          # Download and install Amazon Corretto 20
           wget https://corretto.aws/downloads/latest/amazon-corretto-20-x64-linux-jdk.deb
-          sudo dpkg -i amazon-corretto-18-x64-linux-jdk.deb
+          sudo dpkg -i amazon-corretto-20-x64-linux-jdk.deb
           java --version
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: |
+          java --version
+          ./gradlew build
 
