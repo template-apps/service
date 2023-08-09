@@ -22,7 +22,7 @@ jobs:
       contents: write
     outputs:
       new_tag: ${{ steps.tagger.outputs.new_tag }}
-      registry: ${{ steps.login-ecr.outputs.registry }}
+      ecr_reg: ${{ steps.login-ecr.outputs.registry }}
 
     steps:
       - name: Checkout code
@@ -93,6 +93,6 @@ jobs:
           config-files: infrastructure/helm/values.yaml
           chart-path: infrastructure/helm
           namespace: ${{env.NAMESPACE}}
-          values: image.repository=${{ needs.build.outputs.registry }}/${{env.NAMESPACE}}-${{env.SERVICE}},image.tag=${{ needs.build.outputs.new_tag }},imagePullSecrets=,app.db.local=false,app.db.host="RDS Host TBA",app.db.password="RDS Password TBA"
+          values: image.repository=${{ needs.build.outputs.ecr_reg }}/${{env.NAMESPACE}}-${{env.SERVICE}},image.tag=${{ needs.build.outputs.new_tag }},imagePullSecrets=,app.db.local=false,app.db.host=HOST,app.db.password=PWD
           name: ${{env.SERVICE}}
 
