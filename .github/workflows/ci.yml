@@ -18,6 +18,8 @@ jobs:
         run: |
           wget https://corretto.aws/downloads/latest/amazon-corretto-20-x64-linux-jdk.deb
           sudo dpkg -i amazon-corretto-20-x64-linux-jdk.deb
+          export JAVA_HOME=/usr/lib/jvm/java-20-amazon-corretto
+          export PATH=$JAVA_HOME/bin:$PATH
           java --version
 
       - name: Build with Gradle
