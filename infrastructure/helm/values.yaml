@@ -5,14 +5,13 @@
 replicaCount: 1
 
 image:
-  #  repository: localhost:5500/apps-template-user
-  repository: 881387567440.dkr.ecr.us-east-1.amazonaws.com/apps-template-user
+  repository: "to be overridden"
+  tag: "to be overridden"
   pullPolicy: Always
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest"
 
-#imagePullSecrets: []
-imagePullSecrets: [ { name: regcred } ]
+
+imagePullSecrets: "to be overridden"
+
 nameOverride: ""
 fullnameOverride: ""
 
@@ -49,7 +48,7 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: chart-example.local
+    - host: apps-template-user.local
       paths:
         - path: /
           pathType: ImplementationSpecific
@@ -85,12 +84,12 @@ affinity: {}
 
 app:
   db:
-    local: true
-    host: "user-db"
+    local: "to be overridden"
+    host: "to be overridden"
     port: "3306"
     name: "user"
     user: "user"
-    password: "password"
+    password: "to be overridden"
     initialisationMode: "always"
   server:
     port: "8080"
