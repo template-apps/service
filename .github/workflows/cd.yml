@@ -6,14 +6,21 @@ on:
       - closed
     branches:
       - main
-
+env:
+  NAMESPACE: apps-template
+  SERVICE: user
+  REGION: us-east-1
 jobs:
   build:
+    name: Build, Test, Tag and Push Docker Image to Registry
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: write
+    outputs:
+      new_tag: ${{ steps.tagger.outputs.new_tag }}
+      registry: ${{ steps.login-ecr.outputs.registry }}
 
     steps:
       - name: Checkout code
@@ -40,7 +47,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: arn:aws:iam::881387567440:role/github-actions-role
-          aws-region: us-east-1
+          aws-region: $REGION
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -53,5 +60,37 @@ jobs:
           export JAVA_HOME=/usr/lib/jvm/java-20-amazon-corretto
           export PATH=$JAVA_HOME/bin:$PATH
           ./rebuildAndPush.sh -r ${{ steps.login-ecr.outputs.registry }} \
-            -n apps-template -v "${{ steps.tagger.outputs.new_tag }}"
+            -n $NAMESPACE -v "${{ steps.tagger.outputs.new_tag }}"
+
+  deploy:
+    name: Deploy image to EKS
+    needs: [build]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+          fetch-depth: '0'
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::881387567440:role/github-actions-role
+          aws-region: $REGION
+
+      - name: helm deploy
+        uses: bitovi/github-actions-deploy-eks-helm@v1.2.4
+        with:
+          aws-region: $REGION
+          cluster-name: $NAMESPACE-eks-cluster
+          config-files: infrastructure/helm/values.yaml
+          chart-path: infrastructure/helm
+          namespace: $NAMESPACE
+          values: image.repository="${{ jobs.build.outputs.registry }}/$NAMESPACE-$SERVICE",image.tag="${{ jobs.build.outputs.new_tag }},'imagePullSecrets=',app.db.local=false,app.db.host="RDS Host TBA",app.db.password="RDS Password TBA"
+          name: $SERVICE
 
