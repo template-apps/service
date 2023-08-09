@@ -10,6 +10,8 @@ env:
   NAMESPACE: apps-template
   SERVICE: user
   REGION: us-east-1
+  GITHUB_ACTION_IAM: arn:aws:iam::881387567440:role/github-actions-role
+
 jobs:
   build:
     name: Build, Test, Tag and Push Docker Image to Registry
@@ -46,7 +48,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::881387567440:role/github-actions-role
+          role-to-assume: $GITHUB_ACTION_IAM
           aws-region: $REGION
 
       - name: Login to Amazon ECR
