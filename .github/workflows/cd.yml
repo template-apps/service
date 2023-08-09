@@ -10,7 +10,6 @@ env:
   NAMESPACE: apps-template
   SERVICE: user
   REGION: us-east-1
-  GITHUB_ACTION_IAM: arn:aws:iam::881387567440:role/github-actions-role
 
 jobs:
   build:
@@ -22,7 +21,6 @@ jobs:
       contents: write
     outputs:
       new_tag: ${{ steps.tagger.outputs.new_tag }}
-      ecr_reg: ${{ steps.login-ecr.outputs.registry }}
 
     steps:
       - name: Checkout code
@@ -48,7 +46,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: ${{env.GITHUB_ACTION_IAM}}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{env.REGION}}
 
       - name: Login to Amazon ECR
@@ -82,7 +81,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: ${{env.GITHUB_ACTION_IAM}}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{env.REGION}}
 
       - name: Login to Amazon ECR
