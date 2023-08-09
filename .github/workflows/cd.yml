@@ -91,6 +91,6 @@ jobs:
           config-files: infrastructure/helm/values.yaml
           chart-path: infrastructure/helm
           namespace: $NAMESPACE
-          values: image.repository="${{ jobs.build.outputs.registry }}/$NAMESPACE-$SERVICE",image.tag="${{ jobs.build.outputs.new_tag }},'imagePullSecrets=',app.db.local=false,app.db.host="RDS Host TBA",app.db.password="RDS Password TBA"
+          values: image.repository="${{ needs.build.outputs.registry }}/$NAMESPACE-$SERVICE",image.tag="${{ needs.build.outputs.new_tag }},'imagePullSecrets=',app.db.local=false,app.db.host="RDS Host TBA",app.db.password="RDS Password TBA"
           name: $SERVICE
 
