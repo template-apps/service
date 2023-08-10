@@ -7,6 +7,7 @@ on:
     branches:
       - main
 env:
+  CLUSTER: briklabs-eks-cluster
   NAMESPACE: apps-template
   SERVICE: user
   REGION: us-east-1
@@ -95,7 +96,7 @@ jobs:
         uses: bitovi/github-actions-deploy-eks-helm@v1.2.4
         with:
           aws-region: ${{env.REGION}}
-          cluster-name: ${{env.NAMESPACE}}-eks-cluster
+          cluster-name: ${{env.CLUSTER}}
           config-files: infrastructure/helm/values.yaml
           chart-path: infrastructure/helm
           namespace: ${{env.NAMESPACE}}
