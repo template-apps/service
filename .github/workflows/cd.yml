@@ -6,11 +6,6 @@ on:
       - closed
     branches:
       - main
-env:
-  CLUSTER: template-apps
-  NAMESPACE: apps-template
-  SERVICE: user
-  REGION: us-east-1
 
 jobs:
   build:
@@ -101,4 +96,4 @@ jobs:
           chart-path: infrastructure/helm
           namespace: ${{env.NAMESPACE}}
           values: image.repository=${{ steps.login-ecr.outputs.registry }}/${{env.NAMESPACE}}-${{env.SERVICE}},image.tag=${{ needs.build.outputs.new_tag }},imagePullSecrets=,app.db.local=false,app.db.host=HOST,app.db.password=PWD
-          name: ${{env.SERVICE}}
+          name: user
