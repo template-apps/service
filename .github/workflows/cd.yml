@@ -44,7 +44,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{env.REGION}}
+          aws-region: ${{vars.REGION}}
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -57,7 +57,7 @@ jobs:
           export JAVA_HOME=/usr/lib/jvm/java-20-amazon-corretto
           export PATH=$JAVA_HOME/bin:$PATH
           ./rebuildAndPush.sh -r ${{ steps.login-ecr.outputs.registry }} \
-            -n ${{env.NAMESPACE}} -v "${{ steps.tagger.outputs.new_tag }}"
+            -n ${{vars.NAMESPACE}} -v "${{ steps.tagger.outputs.new_tag }}"
 
   deploy:
     name: Deploy image to EKS
@@ -79,7 +79,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{env.REGION}}
+          aws-region: ${{vars.REGION}}
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -90,10 +90,10 @@ jobs:
       - name: helm deploy
         uses: bitovi/github-actions-deploy-eks-helm@v1.2.4
         with:
-          aws-region: ${{env.REGION}}
-          cluster-name: ${{env.CLUSTER}}
+          aws-region: ${{vars.REGION}}
+          cluster-name: ${{vars.CLUSTER}}
           config-files: infrastructure/helm/values.yaml
           chart-path: infrastructure/helm
-          namespace: ${{env.NAMESPACE}}
-          values: image.repository=${{ steps.login-ecr.outputs.registry }}/${{env.NAMESPACE}}-${{env.SERVICE}},image.tag=${{ needs.build.outputs.new_tag }},imagePullSecrets=,app.db.local=false,app.db.host=HOST,app.db.password=PWD
+          namespace: ${{vars.NAMESPACE}}
+          values: image.repository=${{ steps.login-ecr.outputs.registry }}/${{vars.NAMESPACE}}-${{env.SERVICE}},image.tag=${{ needs.build.outputs.new_tag }},imagePullSecrets=,app.db.local=false,app.db.host=HOST,app.db.password=PWD
           name: user
