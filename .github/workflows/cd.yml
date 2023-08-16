@@ -99,7 +99,7 @@ jobs:
         if: inputs.shouldDeployHelmChart
         run: |
           # Check if the RDS instance exists
-          if aws rds describe-db-instances --db-instance-identifier ${{steps.dbInstanceIdentifierStep.outputs.dbInstanceIdentifier}} >/dev/null 2>&1; then
+          if aws rds describe-db-instances --output json | jq -r ".DBInstances[] | select(.Endpoint.Address == \"${{steps.dbInstanceIdentifierStep.outputs.dbInstanceIdentifier}}\") | .DBInstanceIdentifier" | grep -q "^${{steps.dbInstanceIdentifierStep.outputs.dbInstanceIdentifier}}$"; then
               echo "RDS instance exists: ${{steps.dbInstanceIdentifierStep.outputs.dbInstanceIdentifier}}"
               # Check if the database already exists within the RDS instance
               if ! aws rds describe-databases --db-instance-identifier ${{steps.dbInstanceIdentifierStep.outputs.dbInstanceIdentifier}} --query "Databases[?DBName=='user'].DBName" --output text >/dev/null 2>&1; then
