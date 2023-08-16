@@ -98,7 +98,7 @@ jobs:
       - name: Create DB if it doesn't exist
         if: inputs.shouldDeployHelmChart
         run: |
-          mysql -h${{steps.dbInstanceIdentifierStep.outputs.dbInstanceIdentifier}} -u${{secrets.MYSQL_MASTER_USER} -p${{secrets.MYSQL_MASTER_PASSWORD}} \
+          mysql -h${{steps.dbInstanceIdentifierStep.outputs.dbInstanceIdentifier}} -u${{secrets.MYSQL_MASTER_USER}} -p${{secrets.MYSQL_MASTER_PASSWORD}} \
           -e "CREATE DATABASE IF NOT EXISTS `user` DEFAULT CHARACTER SET utf8mb4;"
 
       - name: helm deploy
