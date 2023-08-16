@@ -95,11 +95,5 @@ jobs:
           config-files: infrastructure/helm/values.yaml
           chart-path: infrastructure/helm
           namespace: ${{vars.NAMESPACE}}
-          values: |
-            image.repository=${{ steps.login-ecr.outputs.registry }}/${{vars.NAMESPACE}}-${{env.SERVICE}},
-            image.tag=${{ needs.build.outputs.new_tag }},
-            imagePullSecrets=,
-            app.db.local=false,
-            app.db.host=HOST,
-            app.db.password=PWD
+          values: image.repository=${{ steps.login-ecr.outputs.registry }}/${{vars.NAMESPACE}}-${{env.SERVICE}},image.tag=${{ needs.build.outputs.new_tag }},imagePullSecrets=,app.db.local=false,app.db.host=HOST,app.db.password=PWD
           name: user
