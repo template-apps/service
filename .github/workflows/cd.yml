@@ -104,3 +104,4 @@ jobs:
           namespace: ${{vars.NAMESPACE}}
           values: image.repository=${{ steps.login-ecr.outputs.registry }}/${{vars.NAMESPACE}}-user,image.tag=${{ needs.build.outputs.new_tag }},imagePullSecrets=,app.db.local=false,app.db.host=${{steps.dbInstanceIdentifierStep.outputs.dbInstanceIdentifier}},app.db.name=user,app.db.user=${{secrets.MYSQL_MASTER_USER}},app.db.password=${{secrets.MYSQL_MASTER_PASSWORD}}
           name: user
+
