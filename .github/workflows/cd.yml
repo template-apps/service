@@ -98,24 +98,8 @@ jobs:
       - name: Create DB if it doesn't exist
         if: inputs.shouldDeployHelmChart
         run: |
-          # Check if the RDS instance exists
-          if aws rds describe-db-instances --output json | jq -r ".DBInstances[] | select(.Endpoint.Address == \"${{steps.dbInstanceIdentifierStep.outputs.dbInstanceIdentifier}}\") | .DBInstanceIdentifier" | grep -q "^${{steps.dbInstanceIdentifierStep.outputs.dbInstanceIdentifier}}$"; then
-              echo "RDS instance exists: ${{steps.dbInstanceIdentifierStep.outputs.dbInstanceIdentifier}}"
-              # Check if the database already exists within the RDS instance
-              if ! aws rds describe-databases --db-instance-identifier ${{steps.dbInstanceIdentifierStep.outputs.dbInstanceIdentifier}} --query "Databases[?DBName=='user'].DBName" --output text >/dev/null 2>&1; then
-                  # Create the new database
-                  aws rds create-db \
-                    --db-instance-identifier ${{steps.dbInstanceIdentifierStep.outputs.dbInstanceIdentifier}} \
-                    --db-name user \
-                    --master-username "${{secrets.MYSQL_MASTER_USER}}" \
-                    --master-user-password "${{secrets.MYSQL_MASTER_PASSWORD}}"
-                  echo "Database created: user"
-              else
-                  echo "Database already exists: user"
-              fi
-          else
-              echo "RDS instance does not exist: ${{steps.dbInstanceIdentifierStep.outputs.dbInstanceIdentifier}}"
-          fi
+          mysql -h${{steps.dbInstanceIdentifierStep.outputs.dbInstanceIdentifier}} -u${{secrets.MYSQL_MASTER_USER} -p${{secrets.MYSQL_MASTER_PASSWORD}} \
+          -e "CREATE DATABASE IF NOT EXISTS `user` DEFAULT CHARACTER SET utf8mb4;"
 
       - name: helm deploy
         uses: bitovi/github-actions-deploy-eks-helm@v1.2.4
