@@ -88,11 +88,34 @@ jobs:
           mask-password: 'true'
 
       - name: Fetch RDS DB Instance Identifier
+        if: inputs.shouldDeployHelmChart
         id: dbInstanceIdentifierStep
         run: |
           dbInstanceIdentifier=$(aws rds describe-db-instances --db-instance-identifier ${{vars.CLUSTER}}-db --region ${{vars.REGION}} --query "DBInstances[].Endpoint.Address" --output text)
           echo "Output [$dbInstanceIdentifier]"
           echo "dbInstanceIdentifier=$dbInstanceIdentifier" >> $GITHUB_OUTPUT
+
+      - name: Create DB if it doesn't exist
+        if: inputs.shouldDeployHelmChart
+        run: |
+          # Check if the RDS instance exists
+          if aws rds describe-db-instances --db-instance-identifier ${{steps.dbInstanceIdentifierStep.outputs.dbInstanceIdentifier}} >/dev/null 2>&1; then
+              echo "RDS instance exists: ${{steps.dbInstanceIdentifierStep.outputs.dbInstanceIdentifier}}"
+              # Check if the database already exists within the RDS instance
+              if ! aws rds describe-databases --db-instance-identifier ${{steps.dbInstanceIdentifierStep.outputs.dbInstanceIdentifier}} --query "Databases[?DBName=='user'].DBName" --output text >/dev/null 2>&1; then
+                  # Create the new database
+                  aws rds create-db \
+                    --db-instance-identifier ${{steps.dbInstanceIdentifierStep.outputs.dbInstanceIdentifier}} \
+                    --db-name user \
+                    --master-username "${{secrets.MYSQL_MASTER_USER}}" \
+                    --master-user-password "${{secrets.MYSQL_MASTER_PASSWORD}}"
+                  echo "Database created: user"
+              else
+                  echo "Database already exists: user"
+              fi
+          else
+              echo "RDS instance does not exist: ${{steps.dbInstanceIdentifierStep.outputs.dbInstanceIdentifier}}"
+          fi
 
       - name: helm deploy
         uses: bitovi/github-actions-deploy-eks-helm@v1.2.4
@@ -102,5 +125,5 @@ jobs:
           config-files: infrastructure/helm/values.yaml
           chart-path: infrastructure/helm
           namespace: ${{vars.NAMESPACE}}
-          values: image.repository=${{ steps.login-ecr.outputs.registry }}/${{vars.NAMESPACE}}-${{env.SERVICE}},image.tag=${{ needs.build.outputs.new_tag }},imagePullSecrets=,app.db.local=false,app.db.host=${{steps.dbInstanceIdentifierStep.outputs.dbInstanceIdentifier}},app.db.user=${{secrets.MYSQL_MASTER_USER}},app.db.password=${{secrets.MYSQL_MASTER_PASSWORD}}
+          values: image.repository=${{ steps.login-ecr.outputs.registry }}/${{vars.NAMESPACE}}-${{env.SERVICE}},image.tag=${{ needs.build.outputs.new_tag }},imagePullSecrets=,app.db.local=false,app.db.host=${{steps.dbInstanceIdentifierStep.outputs.dbInstanceIdentifier}},app.db.name=user,app.db.user=${{secrets.MYSQL_MASTER_USER}},app.db.password=${{secrets.MYSQL_MASTER_PASSWORD}}
           name: user
