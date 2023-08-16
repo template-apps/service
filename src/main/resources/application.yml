@@ -13,16 +13,3 @@ spring:
 
 server:
   port: ${SERVER_PORT}
-
-#management:
-#  endpoint:
-#    health:
-#      probes:
-#        enabled=true:
-#  health:
-#    livenessState:
-#      enabled: true
-#    readinessState:
-#      enabled: true
-#    probes:
-#      enabled=true:
