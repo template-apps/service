@@ -88,7 +88,6 @@ jobs:
           mask-password: 'true'
 
       - name: Fetch RDS DB Instance Identifier
-        if: inputs.shouldDeployHelmChart
         id: dbInstanceIdentifierStep
         run: |
           dbInstanceIdentifier=$(aws rds describe-db-instances --db-instance-identifier ${{vars.CLUSTER}}-db --region ${{vars.REGION}} --query "DBInstances[].Endpoint.Address" --output text)
