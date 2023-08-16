@@ -87,6 +87,13 @@ jobs:
         with:
           mask-password: 'true'
 
+      - name: Fetch RDS DB Instance Identifier
+        id: dbInstanceIdentifierStep
+        run: |
+          dbInstanceIdentifier=$(aws rds describe-db-instances --db-instance-identifier ${{vars.CLUSTER}}-db --region ${{vars.REGION}} --query "DBInstances[].Endpoint.Address" --output text)
+          echo "Output [$dbInstanceIdentifier]"
+          echo "dbInstanceIdentifier=$dbInstanceIdentifier" >> $GITHUB_OUTPUT
+
       - name: helm deploy
         uses: bitovi/github-actions-deploy-eks-helm@v1.2.4
         with:
@@ -95,5 +102,5 @@ jobs:
           config-files: infrastructure/helm/values.yaml
           chart-path: infrastructure/helm
           namespace: ${{vars.NAMESPACE}}
-          values: image.repository=${{ steps.login-ecr.outputs.registry }}/${{vars.NAMESPACE}}-${{env.SERVICE}},image.tag=${{ needs.build.outputs.new_tag }},imagePullSecrets=,app.db.local=false,app.db.host=HOST,app.db.password=PWD
+          values: image.repository=${{ steps.login-ecr.outputs.registry }}/${{vars.NAMESPACE}}-${{env.SERVICE}},image.tag=${{ needs.build.outputs.new_tag }},imagePullSecrets=,app.db.local=false,app.db.host=${{steps.dbInstanceIdentifierStep.outputs.dbInstanceIdentifier}},app.db.user=${{secrets.MYSQL_MASTER_USER}},app.db.password=${{secrets.MYSQL_MASTER_PASSWORD}}
           name: user
