@@ -2,32 +2,32 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "user.fullname" . }}-db
+  name: {{ include "service.fullname" . }}-db
 spec:
   ports:
     - port: {{ .Values.app.db.port }}
   selector:
-    app: {{ include "user.fullname" . }}-db
+    app: {{ include "service.fullname" . }}-db
   clusterIP: None
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "user.fullname" . }}-db
+  name: {{ include "service.fullname" . }}-db
 spec:
   selector:
     matchLabels:
-      app: {{ include "user.fullname" . }}-db
+      app: {{ include "service.fullname" . }}-db
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: {{ include "user.fullname" . }}-db
+        app: {{ include "service.fullname" . }}-db
     spec:
       containers:
         - image: mysql:8.1
-          name: {{ include "user.fullname" . }}-db
+          name: {{ include "service.fullname" . }}-db
           env:
             # Use secret in real usage
             - name: MYSQL_ROOT_PASSWORD
@@ -40,20 +40,20 @@ spec:
               value: {{ .Values.app.db.password }}
           ports:
             - containerPort: {{ .Values.app.db.port }}
-              name: {{ include "user.fullname" . }}-db
+              name: {{ include "service.fullname" . }}-db
           imagePullPolicy: "Always"
           volumeMounts:
-            - name: {{ include "user.fullname" . }}-db-persistent-storage
+            - name: {{ include "service.fullname" . }}-db-persistent-storage
               mountPath: /var/lib/user-db
       volumes:
-        - name: {{ include "user.fullname" . }}-db-persistent-storage
+        - name: {{ include "service.fullname" . }}-db-persistent-storage
           persistentVolumeClaim:
-            claimName: {{ include "user.fullname" . }}-db-pv-claim
+            claimName: {{ include "service.fullname" . }}-db-pv-claim
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: {{ include "user.fullname" . }}-db-pv-volume
+  name: {{ include "service.fullname" . }}-db-pv-volume
   labels:
     type: local
 spec:
@@ -68,7 +68,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "user.fullname" . }}-db-pv-claim
+  name: {{ include "service.fullname" . }}-db-pv-claim
 spec:
   storageClassName: manual
   accessModes:
