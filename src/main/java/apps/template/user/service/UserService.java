@@ -1,22 +1,25 @@
 package apps.template.user.service;
 
 
-import apps.template.user.transfer.SignupRequest;
-import apps.template.user.transfer.UserCredentials;
-import apps.template.user.transfer.UserInfo;
+import apps.template.user.repository.SubscribersRepository;
 import apps.template.user.repository.UserCredentialsRepository;
 import apps.template.user.repository.UserInfoRepository;
 import apps.template.user.repository.UserTokenRepository;
+import apps.template.user.repository.entity.SubscribersEntity;
 import apps.template.user.repository.entity.UserCredentialsEntity;
 import apps.template.user.repository.entity.UserInfoEntity;
 import apps.template.user.repository.entity.UserTokenEntity;
+import apps.template.user.transfer.SignupRequest;
+import apps.template.user.transfer.SubscribeRequest;
+import apps.template.user.transfer.UserCredentials;
+import apps.template.user.transfer.UserInfo;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,6 +37,9 @@ public class UserService {
 
     @Autowired
     UserTokenRepository userTokenRepository;
+
+    @Autowired
+    SubscribersRepository subscribersRepository;
 
     public String authenticate(@Valid @NotNull final UserCredentials passedCredentials) {
         final UserInfoEntity userInfoEntity = userInfoRepository.findByEmail(passedCredentials.getUserName());
@@ -117,5 +123,12 @@ public class UserService {
         return userTokens.stream()
                 .map(UserTokenEntity::getUserToken)
                 .collect(Collectors.toSet());
+    }
+
+    public boolean subscribe(@Valid @NotNull final SubscribeRequest subscribeRequest) {
+        if (subscribersRepository.findByEmail(subscribeRequest.getEmail()) == null) {
+            subscribersRepository.save(new SubscribersEntity(subscribeRequest.getEmail()));
+        }
+        return true;
     }
 }

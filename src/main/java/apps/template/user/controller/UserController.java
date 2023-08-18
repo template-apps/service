@@ -1,6 +1,7 @@
 package apps.template.user.controller;
 
 import apps.template.user.transfer.SignupRequest;
+import apps.template.user.transfer.SubscribeRequest;
 import apps.template.user.transfer.UserCredentials;
 import apps.template.user.transfer.UserInfo;
 import apps.template.user.service.UserService;
@@ -33,6 +34,12 @@ public class UserController {
     public String signup(@RequestBody final SignupRequest signupRequest) {
         LOGGER.info("Signing up {}", signupRequest.getEmail());
         return userService.signup(signupRequest);
+    }
+    @CrossOrigin
+    @RequestMapping(value = "/subscribe", method = PUT)
+    public boolean subscribe(@RequestBody final SubscribeRequest subscribeRequest) {
+        LOGGER.info("Subscribing {}", subscribeRequest.getEmail());
+        return userService.subscribe(subscribeRequest);
     }
 
     @CrossOrigin
