@@ -41,3 +41,11 @@ CREATE TABLE IF NOT EXISTS `user_token` (
   FOREIGN KEY (`user_id`) REFERENCES `user_info`(`id`),
   UNIQUE KEY `uc_token_uidx` (`user_token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `subscribers` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `email` varchar(200) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `s_email_uidx` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
